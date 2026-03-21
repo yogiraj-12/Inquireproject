@@ -1,8 +1,11 @@
 {
-  "version": 2,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/Backend/server.js" },
-    { "source": "/admin/(.*)", "destination": "/AdminPanel/dist/$1" },
-    { "source": "/(.*)", "destination": "/Frontend/dist/$1" }
+  "builds": [
+    {
+      "src": "Frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
   ]
 }
