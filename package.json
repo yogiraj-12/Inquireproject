@@ -1,0 +1,8 @@
+{
+  "name": "inquireproject-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix Frontend install && npm --prefix Frontend run build && npm --prefix AdminPanel install && npm --prefix AdminPanel run build && cp -r AdminPanel/dist Frontend/dist/admin"
+  }
+}
