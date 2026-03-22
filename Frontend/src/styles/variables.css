@@ -1,0 +1,17 @@
+:root {
+  --bg-primary: #05050A;
+  --bg-secondary: #0A0A14;
+  --accent-primary: #8a2be2;
+  --accent-secondary: #00ffff;
+  --accent-tertiary: #f72585;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b0;
+  --text-tertiary: #6c6c80;
+  --success: #00e676;
+  --error: #ff1744;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
