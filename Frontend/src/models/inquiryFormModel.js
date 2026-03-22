@@ -20,23 +20,25 @@ export const useInquiryStore = create((set) => ({
   submitForm: async (data) => {
     set({ status: 'submitting' });
     try {
-      // Actual API call to localhost backend
+      // Corrected URL building that ensures '/api/requests' is always appended
       const apiUrl = import.meta.env.VITE_API_URL || 'https://inquireproject.onrender.com';
-      const response = await fetch(`${apiUrl}/api/requests`, {
+      const cleanApiUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
+      
+      const response = await fetch(`${cleanApiUrl}/api/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: data.fullName,
           company: data.companyName || 'N/A',
           type: data.projectType === 'web' ? 'Website' : data.projectType === 'mobile' ? 'App' : 'Other',
-          budget: 'TBD'
+          budget: 'TBD',
+          status: 'Unread'
         }),
       });
 
       if (!response.ok) throw new Error('API error');
       console.log('Form submitted successfully:', data);
       set({ status: 'success', errorMessage: '' });
-      // Reset after 3 seconds
       setTimeout(() => set({ status: 'idle' }), 3000);
     } catch (error) {
       set({ status: 'error', errorMessage: 'Something went wrong. Please try again.' });
