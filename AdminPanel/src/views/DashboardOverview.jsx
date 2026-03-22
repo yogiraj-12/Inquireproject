@@ -1,15 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import { Activity, Globe, Smartphone, Server } from 'lucide-react';
 
-const data = [
-  { name: 'Website', count: 45 },
-  { name: 'App', count: 32 },
-  { name: 'Server', count: 18 },
-  { name: 'Other', count: 12 },
-];
-
 const DashboardOverview = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://inquireproject.onrender.com/';
+    fetch(`${apiUrl}/api/requests`)
+      .then(res => res.json())
+      .then(fetchedData => {
+        setRequests(fetchedData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch dashboard data:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const totalRequests = requests.length;
+  const unreadCount = requests.filter(r => r.status === 'Unread').length;
+
+  const typeCounts = requests.reduce((acc, r) => {
+    acc[r.type] = (acc[r.type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const topService = Object.keys(typeCounts).length > 0 
+    ? Object.keys(typeCounts).reduce((a, b) => typeCounts[a] > typeCounts[b] ? a : b) 
+    : 'None';
+
+  const data = Object.keys(typeCounts).map(key => ({
+    name: key,
+    count: typeCounts[key]
+  }));
+
+  if (data.length === 0) {
+    data.push({ name: 'No Data', count: 0 });
+  }
+
   return (
     <div className="view-container">
       <h1 className="page-title">Dashboard Overview</h1>
@@ -20,22 +51,24 @@ const DashboardOverview = () => {
           <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={18} color="var(--admin-accent-primary)" /> Total Requests
           </div>
-          <div className="metric-value">107</div>
-          <p style={{ color: 'var(--admin-success)', fontSize: '0.9rem', marginTop: '0.5rem' }}>+12% this week</p>
+          <div className="metric-value">{loading ? '...' : totalRequests}</div>
+          <p style={{ color: 'var(--admin-success)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Updated dynamically</p>
         </div>
         <div className="admin-card">
           <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Globe size={18} color="var(--admin-accent-secondary)" /> Top Service
           </div>
-          <div className="metric-value" style={{ color: 'var(--admin-accent-secondary)' }}>Website</div>
-          <p style={{ color: 'var(--admin-text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>42% of all requests</p>
+          <div className="metric-value" style={{ color: 'var(--admin-accent-secondary)' }}>{loading ? '...' : topService}</div>
+          <p style={{ color: 'var(--admin-text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Highest volume request</p>
         </div>
         <div className="admin-card">
           <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Smartphone size={18} color="var(--admin-accent-tertiary)" /> Unread
           </div>
-          <div className="metric-value" style={{ color: 'var(--admin-accent-tertiary)' }}>14</div>
-          <p style={{ color: 'var(--admin-warning)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Needs immediate attention</p>
+          <div className="metric-value" style={{ color: 'var(--admin-accent-tertiary)' }}>{loading ? '...' : unreadCount}</div>
+          <p style={{ color: unreadCount > 0 ? 'var(--admin-warning)' : 'var(--admin-success)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+            {unreadCount > 0 ? 'Needs immediate attention' : 'All caught up!'}
+          </p>
         </div>
       </div>
 

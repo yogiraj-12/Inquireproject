@@ -21,7 +21,7 @@ export const useInquiryStore = create((set) => ({
     set({ status: 'submitting' });
     try {
       // Actual API call to localhost backend
-      const response = await fetch('http://localhost:5000/api/requests', {
+      const response = await fetch('https://inquireproject.onrender.com/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
